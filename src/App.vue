@@ -1,12 +1,56 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div class="home">
+      <img alt="Vue logo" src="./assets/logo.png">
     </div>
-    <router-view/>
+    <p>{{ key }}</p>
+    <button class="btn" @click="show" value="small">modal window {{size[0]}}</button>
+    <button class="btn" @click="show" value='medium'>modal window {{size[1]}}</button>
+    <button class="btn" @click="show" value='large'>modal window {{size[2]}}</button>
+    <transition name="slide">
+      <Modal v-if="this.$store.state.isShow" v-bind:s="this.key">
+        Возможно, вам будет интересно узнать, что Vue-шаблоны в действительности компилируются в render-функцию. Обычно нет необходимости знать подобные детали реализации, но может быть любопытным посмотреть на то, как компилируются те или иные возможности шаблонов. Ниже приведена небольшая демонстрация использования метода Vue.compile, который в режиме реального времени компилирует строки шаблонов:
+        <hr>
+      </Modal>
+    </transition>
   </div>
 </template>
+<script>
+import Modal from './components/Modal.vue'
+import Vuex from 'vuex'
+import store from './store.ts'
+import Vue from 'vue'
+Vue.use(Vuex)
+
+
+export default {
+  components: {
+    Modal
+  },
+  data() {
+    return {
+      size: ['small', 'medium', 'large'],
+      key: '123'
+    }
+  },
+  computed: {
+   changeKey: function () {
+     return key
+   }
+  },
+  methods: {
+    hide () {
+      this.$store.commit('hideModal')
+    },
+    show (event) { 
+      this.$store.commit('showModal');
+      this.key = event.target.value
+    }
+    
+  }
+
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -16,14 +60,22 @@
   text-align: center;
   color: #2c3e50;
 }
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+.slide {
+  &-enter-active, &-leave-active {
+    transition: all .5s ease;
+  }
+  &-enter, &-leave-to {
+    transform: translateY(-100px);
+    opacity: 0;
   }
 }
+.btn {
+  background: #42b983;
+  padding: 10px;
+  border: none;
+  margin: 15px;
+  color: #2c3e50;
+  font-size: 18px
+}
+
 </style>
